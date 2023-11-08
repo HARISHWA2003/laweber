@@ -7,7 +7,17 @@ import { auth } from "../firebase/config";
 import { BiSearchAlt } from "react-icons/bi";
 import { HiPlus } from "react-icons/hi";
 import { BsArrowUpRight } from "react-icons/bs";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import delData from "../firebase/firestore/delData";
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { FaEdit } from "react-icons/fa";
+import { AiFillDelete } from "react-icons/ai";
 import GotoPage from "../components/gotoPage";
 
 // import signOut from "../firebase/auth/signOut";
@@ -26,7 +36,12 @@ function Page() {
   const { user } = useAuthContext();
   const [mail, setMail] = useState("");
   const [uid, setUid] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const router = useRouter();
+  const newSite = () => {
+    setLoading(true);
+    router.push("/newSite");
+  };
   const handleLogout = () => {
     signOut(auth);
   };
@@ -46,6 +61,10 @@ function Page() {
     }
     fetchData(user.uid);
   }, []);
+  const deletedata = (uid, coll) => {
+    delData(uid, coll);
+    router.refresh();
+  };
   return (
     <div className="bg-[#1e2122] h-fit">
       <nav className="h-24 p-8 px-14 flex flex-row justify-between">
@@ -69,24 +88,38 @@ function Page() {
           placeholder="Search"
         />
         <div className="bg-[#298a87] p-2 rounded-md flex flex-row items-center cursor-pointer hover:brightness-75 transition-all">
-          <HiPlus className="fill-white" />
-          <div
-            onClick={() => router.push("/newSite")}
-            className="px-2 font-medium text-white"
-          >
+          {/* <HiPlus className="fill-white" /> */}
+          {isLoading ? (
+            <span className="loading loading-dots loading-md"></span>
+          ) : (
+            <HiPlus className="fill-white" />
+          )}
+          <div onClick={newSite} className="px-2 font-medium text-white">
             New Site
           </div>
         </div>
       </div>
-      <div className="courses grid grid-cols-2 justify-center place-items-center gap-4">
-        {userData.map((user) => (
+      <div className="courses grid grid-cols-3 justify-center place-items-center gap-4">
+        {userData.map((value) => (
           // eslint-disable-next-line react/jsx-key
-          <div
-            onClick={() => router.push("/" + "dashboard" + "/" + user)}
-            className="bg-[#2c3032] cursor-pointer hover:scale-105 shadow-lg rounded-lg my-4 transition-all w-11/12 h-[400px]"
-          >
-            <div className="bg-black h-[300px] w-full rounded-md"></div>
-            <div className="text-3xl text-white">{user}</div>
+          <div className="bg-[#2c3032] cursor-pointer hover:scale-105 shadow-lg rounded-lg my-4 transition-all w-11/12 h-[400px] p-4">
+            <div className="text-6xl text-white">{value}</div>
+            <div className="divider"></div>
+            <div className="text-white text-2xl p-4 font-mono font-bold h-64 flex flex-col justify-end items-start">
+              <div className="btn btn-ghost text-2xl m-2">Preview</div>
+              <div
+                onClick={() => router.push("/" + "dashboard" + "/" + value)}
+                className="btn btn-ghost text-2xl m-2"
+              >
+                Edit <FaEdit className="ml-4" />
+              </div>
+              <div
+                onClick={() => deletedata(user.uid, value)}
+                className="btn btn-error text-2xl text-white m-2"
+              >
+                Delete <AiFillDelete className="ml-4 fill-white" />
+              </div>
+            </div>
           </div>
         ))}
       </div>

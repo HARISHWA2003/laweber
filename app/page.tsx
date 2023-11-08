@@ -44,7 +44,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 ">
           <Image
             src={ppp4}
             // height={400}

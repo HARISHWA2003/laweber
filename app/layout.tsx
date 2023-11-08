@@ -26,7 +26,7 @@ export default function RootLayout({
   console.log({ pathname });
   return (
     <html lang="en">
-      <body className="h-screen">
+      <body className="h-screen scroll-smooth">
         <AuthContextProvider>{children}</AuthContextProvider>
       </body>
     </html>
